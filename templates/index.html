@@ -37,8 +37,8 @@
   </div>
 </header>
 
-<!-- PROGRESS BAR -->
-<div class="progress-container">
+<!-- PROGRESS BAR (hidden on home page) -->
+<div class="progress-container" id="progressContainer" style="display:none">
   <div class="progress-bar-wrap">
     <div id="progressBar" class="progress-bar" style="width:20%"></div>
   </div>
@@ -52,12 +52,135 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<main class="main-content">
+<main class="main-content" id="mainContent">
+
+  <!-- HOME PAGE -->
+  <section class="step-section active" id="stepHome">
+    <!-- Hero -->
+    <div class="home-hero">
+      <div class="home-hero-badge" data-i18n="home_badge">AI-Powered Health Screening</div>
+      <h1 class="home-hero-title" data-i18n="home_title">Understand Your Symptoms,<br>Get Informed Guidance</h1>
+      <p class="home-hero-subtitle" data-i18n="home_subtitle">A free, multilingual health assessment tool using Machine Learning to help rural communities identify potential health conditions and seek timely care.</p>
+      <div class="home-hero-actions">
+        <button class="btn-primary home-cta" onclick="startAssessment()" data-i18n="home_cta">Start Health Assessment</button>
+        <a class="home-learn-link" href="#home-features" data-i18n="home_learn">Learn how it works</a>
+      </div>
+      <div class="home-stats">
+        <div class="home-stat">
+          <span class="home-stat-value">95.6%</span>
+          <span class="home-stat-label" data-i18n="home_stat_accuracy">Model Accuracy</span>
+        </div>
+        <div class="home-stat-divider"></div>
+        <div class="home-stat">
+          <span class="home-stat-value">24</span>
+          <span class="home-stat-label" data-i18n="home_stat_diseases">Conditions Detected</span>
+        </div>
+        <div class="home-stat-divider"></div>
+        <div class="home-stat">
+          <span class="home-stat-value">3</span>
+          <span class="home-stat-label" data-i18n="home_stat_langs">Languages</span>
+        </div>
+        <div class="home-stat-divider"></div>
+        <div class="home-stat">
+          <span class="home-stat-value">2</span>
+          <span class="home-stat-label" data-i18n="home_stat_models">ML Models</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div id="home-features" class="home-section">
+      <div class="home-section-tag" data-i18n="home_how_tag">How It Works</div>
+      <h2 class="home-section-title" data-i18n="home_how_title">Four simple steps to your health assessment</h2>
+      <div class="home-steps-grid">
+        <div class="home-step-card">
+          <div class="home-step-num">01</div>
+          <div class="home-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h3 class="home-step-title" data-i18n="home_step1_title">Personal Info</h3>
+          <p class="home-step-desc" data-i18n="home_step1_desc">Enter your age, gender, and existing medical conditions for a personalised assessment.</p>
+        </div>
+        <div class="home-step-card">
+          <div class="home-step-num">02</div>
+          <div class="home-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/>
+            </svg>
+          </div>
+          <h3 class="home-step-title" data-i18n="home_step2_title">Select Symptoms</h3>
+          <p class="home-step-desc" data-i18n="home_step2_desc">Pick from 23 common symptoms with severity levels — or describe them in your own words.</p>
+        </div>
+        <div class="home-step-card">
+          <div class="home-step-num">03</div>
+          <div class="home-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3 class="home-step-title" data-i18n="home_step3_title">AI Analysis</h3>
+          <p class="home-step-desc" data-i18n="home_step3_desc">Two ML models — Random Forest and Naive Bayes — analyse your symptoms simultaneously.</p>
+        </div>
+        <div class="home-step-card">
+          <div class="home-step-num">04</div>
+          <div class="home-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12 19.79 19.79 0 0 1 1 4.18 2 2 0 0 1 2.96 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/>
+            </svg>
+          </div>
+          <h3 class="home-step-title" data-i18n="home_step4_title">Get Results</h3>
+          <p class="home-step-desc" data-i18n="home_step4_desc">Receive top probable conditions, risk levels, care guidance, and nearby hospital locations.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features row -->
+    <div class="home-features-row">
+      <div class="home-feature-item">
+        <div class="home-feature-icon home-feature-icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="home-feature-name" data-i18n="home_feat1_title">Privacy First</div>
+          <div class="home-feature-desc" data-i18n="home_feat1_desc">No account needed. Data stays on this session only.</div>
+        </div>
+      </div>
+      <div class="home-feature-item">
+        <div class="home-feature-icon home-feature-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div>
+          <div class="home-feature-name" data-i18n="home_feat2_title">Multilingual</div>
+          <div class="home-feature-desc" data-i18n="home_feat2_desc">Available in English, Telugu, and Hindi.</div>
+        </div>
+      </div>
+      <div class="home-feature-item">
+        <div class="home-feature-icon home-feature-icon-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="home-feature-name" data-i18n="home_feat3_title">Hospital Finder</div>
+          <div class="home-feature-desc" data-i18n="home_feat3_desc">Locate nearby healthcare facilities after your assessment.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="home-disclaimer" data-i18n="disclaimer">
+      This is a preliminary health awareness tool, not a substitute for professional medical advice. Always consult a qualified healthcare provider for diagnosis and treatment.
+    </div>
+
+    <div style="text-align:center; margin-top: 40px;">
+      <button class="btn-primary home-cta" onclick="startAssessment()" data-i18n="home_cta">Start Health Assessment</button>
+    </div>
+  </section>
 
   <!-- STEP 1: Personal Info -->
-  <section class="step-section active" id="step1">
+  <section class="step-section" id="step1">
     <div class="step-header">
-      <div class="step-badge">Step 1 of 5</div>
+      <div class="step-badge" data-i18n="step1_badge">Step 1 of 5</div>
       <h2 class="step-title" data-i18n="step1_title">Personal Information</h2>
       <p class="step-subtitle" data-i18n="step1_subtitle">Tell us about yourself</p>
     </div>
@@ -65,6 +188,7 @@
       <div class="input-card">
         <label class="input-label" data-i18n="age_label">Age</label>
         <input type="number" id="age" class="input-field" min="1" max="120" placeholder="Enter your age" data-i18n-placeholder="age_placeholder">
+        <div class="field-error hidden" id="age-error" data-i18n="age_error">Please enter a valid age between 1 and 120.</div>
       </div>
       <div class="input-card">
         <label class="input-label" data-i18n="gender_label">Gender</label>
@@ -73,20 +197,21 @@
           <button class="gender-btn" data-value="female" onclick="selectGender(this)" data-i18n="female">Female</button>
           <button class="gender-btn" data-value="other" onclick="selectGender(this)" data-i18n="other">Other</button>
         </div>
+        <div class="field-error hidden" id="gender-error" data-i18n="gender_error">Please select your gender.</div>
       </div>
     </div>
     <div class="nav-row">
-      <div></div>
-      <button class="btn-primary" onclick="goToStep(2)" data-i18n="next">Next →</button>
+      <button class="btn-secondary" onclick="goToStep('home')" data-i18n="back_home">Back to Home</button>
+      <button class="btn-primary" onclick="goToStep(2)" data-i18n="next">Next</button>
     </div>
   </section>
 
   <!-- STEP 2: Medical History -->
   <section class="step-section" id="step2">
     <div class="step-header">
-      <div class="step-badge">Step 2 of 5</div>
+      <div class="step-badge" data-i18n="step2_badge">Step 2 of 5</div>
       <h2 class="step-title" data-i18n="step2_title">Medical History</h2>
-      <p class="step-subtitle" data-i18n="step2_subtitle">Select any conditions you have</p>
+      <p class="step-subtitle" data-i18n="step2_subtitle">Select any conditions you have been diagnosed with</p>
     </div>
     <div class="history-grid">
       <div class="history-card" data-condition="none" onclick="toggleHistory(this)">
@@ -110,16 +235,17 @@
         <span data-i18n="heart_disease">Heart Disease</span>
       </div>
     </div>
+    <div class="field-error hidden" id="history-error" data-i18n="history_error">Please select at least one option (choose "None" if no conditions apply).</div>
     <div class="nav-row">
-      <button class="btn-secondary" onclick="goToStep(1)" data-i18n="back">← Back</button>
-      <button class="btn-primary" onclick="goToStep(3)" data-i18n="next">Next →</button>
+      <button class="btn-secondary" onclick="goToStep(1)" data-i18n="back">Back</button>
+      <button class="btn-primary" onclick="goToStep(3)" data-i18n="next">Next</button>
     </div>
   </section>
 
   <!-- STEP 3: Symptoms -->
   <section class="step-section" id="step3">
     <div class="step-header">
-      <div class="step-badge">Step 3 of 5</div>
+      <div class="step-badge" data-i18n="step3_badge">Step 3 of 5</div>
       <h2 class="step-title" data-i18n="step3_title">Symptom Assessment</h2>
       <p class="step-subtitle" data-i18n="step3_subtitle">Select symptoms and severity, or describe in text</p>
     </div>
@@ -140,21 +266,23 @@
       <div class="text-input-card">
         <textarea id="symptomText" class="symptom-textarea" rows="5" data-i18n-placeholder="describe_placeholder"
           placeholder="e.g. I have severe fever, moderate cough and mild headache for 4 days"></textarea>
-        <button class="btn-analyze" onclick="analyzeText()" data-i18n="analyze_text">🔍 Analyze Text</button>
+        <button class="btn-analyze" onclick="analyzeText()" data-i18n="analyze_text">Analyze Text</button>
         <div id="textResult" class="text-result hidden"></div>
       </div>
     </div>
 
+    <div class="field-error hidden" id="symptoms-error" data-i18n="symptoms_error">Please select at least one symptom before continuing.</div>
+
     <div class="nav-row">
-      <button class="btn-secondary" onclick="goToStep(2)" data-i18n="back">← Back</button>
-      <button class="btn-primary" onclick="goToStep(4)" data-i18n="next">Next →</button>
+      <button class="btn-secondary" onclick="goToStep(2)" data-i18n="back">Back</button>
+      <button class="btn-primary" onclick="goToStep(4)" data-i18n="next">Next</button>
     </div>
   </section>
 
   <!-- STEP 4: Duration -->
   <section class="step-section" id="step4">
     <div class="step-header">
-      <div class="step-badge">Step 4 of 5</div>
+      <div class="step-badge" data-i18n="step4_badge">Step 4 of 5</div>
       <h2 class="step-title" data-i18n="step4_title">Symptom Duration</h2>
       <p class="step-subtitle" data-i18n="step4_subtitle">How long have you experienced these symptoms?</p>
     </div>
@@ -176,23 +304,24 @@
         <span data-i18n="duration_10plus">More than 10 Days</span>
       </div>
     </div>
+    <div class="field-error hidden" id="duration-error" data-i18n="duration_error">Please select how long you have had these symptoms.</div>
     <div class="nav-row">
-      <button class="btn-secondary" onclick="goToStep(3)" data-i18n="back">← Back</button>
-      <button class="btn-primary" onclick="runAssessment()" data-i18n="run_assessment">🔬 Run Assessment</button>
+      <button class="btn-secondary" onclick="goToStep(3)" data-i18n="back">Back</button>
+      <button class="btn-primary" onclick="runAssessment()" data-i18n="run_assessment">Run Assessment</button>
     </div>
   </section>
 
   <!-- STEP 5: Results -->
   <section class="step-section" id="step5">
     <div class="step-header">
-      <div class="step-badge">Step 5 of 5</div>
+      <div class="step-badge" data-i18n="step5_badge">Step 5 of 5</div>
       <h2 class="step-title" data-i18n="step5_title">Health Assessment Results</h2>
       <p class="step-subtitle" data-i18n="step5_subtitle">Based on your symptom evaluation</p>
     </div>
 
     <div id="resultsLoader" class="loader-wrap">
       <div class="loader-spinner"></div>
-      <p>Analyzing your symptoms...</p>
+      <p data-i18n="analyzing">Analyzing your symptoms...</p>
     </div>
 
     <div id="resultsContent" class="hidden">
@@ -236,7 +365,7 @@
       <div class="hospitals-section">
         <div class="hospitals-header">
           <h3 class="section-title" data-i18n="hospitals_title">Nearby Hospitals</h3>
-          <button class="btn-find-hospitals" onclick="findHospitals()" data-i18n="find_hospitals">📍 Find Nearby Hospitals</button>
+          <button class="btn-find-hospitals" onclick="findHospitals()" data-i18n="find_hospitals">Find Nearby Hospitals</button>
         </div>
         <div id="demoNotice" class="demo-notice hidden"></div>
         <div id="hospitalsList" class="hospitals-list hidden"></div>
@@ -249,7 +378,7 @@
       </div>
 
       <div class="nav-row center">
-        <button class="btn-primary" onclick="resetAssessment()" data-i18n="new_assessment">🔄 New Assessment</button>
+        <button class="btn-primary" onclick="resetAssessment()" data-i18n="new_assessment">New Assessment</button>
       </div>
     </div>
   </section>
@@ -277,6 +406,10 @@
         <button class="severity-opt" data-value="3" onclick="setSeverity(3)">
           <span class="sev-dot severe"></span>
           <span data-i18n="severe">Severe</span>
+        </button>
+        <button class="severity-opt severity-opt-remove" onclick="setSeverity(0)" id="modalRemoveBtn">
+          <span class="sev-dot" style="background:var(--text3)"></span>
+          <span data-i18n="not_present">Not Present</span>
         </button>
       </div>
     </div>

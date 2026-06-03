@@ -5,17 +5,39 @@ let selectedGender = '';
 let selectedHistory = new Set();
 let selectedDuration = '';
 
+// ── HOME PAGE ────────────────────────────────────────────────────
+
+function startAssessment() {
+  goToStep(1);
+}
+
 // ── STEP NAVIGATION ──────────────────────────────────────────────
 
 function goToStep(n) {
   if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
   if (n === 4 && !validateStep3()) return;
 
+  // Clear all step sections
   document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+
+  // Show progress bar for numbered steps, hide on home
+  const progressContainer = document.getElementById('progressContainer');
+
+  if (n === 'home') {
+    document.getElementById('stepHome').classList.add('active');
+    progressContainer.style.display = 'none';
+    currentStep = 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
   document.getElementById(`step${n}`).classList.add('active');
   currentStep = n;
 
-  // Update progress
+  progressContainer.style.display = 'block';
+
+  // Update progress bar
   const pct = (n / 5) * 100;
   document.getElementById('progressBar').style.width = pct + '%';
 
@@ -36,34 +58,65 @@ function goToStep(n) {
 
 // ── VALIDATION ───────────────────────────────────────────────────
 
+function showFieldError(errorId, show) {
+  const el = document.getElementById(errorId);
+  if (!el) return;
+  el.classList.toggle('hidden', !show);
+}
+
+function clearAllErrors() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.input-field').forEach(el => el.classList.remove('input-error'));
+}
+
 function validateStep1() {
-  const age = document.getElementById('age').value;
-  if (!age || age < 1 || age > 120) {
-    showError('age', 'Please enter a valid age (1–120).');
-    return false;
+  clearAllErrors();
+  let valid = true;
+
+  const ageEl = document.getElementById('age');
+  const age = parseInt(ageEl.value);
+  if (!ageEl.value || isNaN(age) || age < 1 || age > 120) {
+    ageEl.classList.add('input-error');
+    showFieldError('age-error', true);
+    ageEl.focus();
+    valid = false;
   }
+
   if (!selectedGender) {
-    alert('Please select your gender.');
+    showFieldError('gender-error', true);
+    if (valid) document.querySelector('.gender-btn').focus();
+    valid = false;
+  }
+
+  return valid;
+}
+
+function validateStep2() {
+  if (selectedHistory.size === 0) {
+    showFieldError('history-error', true);
     return false;
   }
+  showFieldError('history-error', false);
   return true;
 }
 
 function validateStep3() {
   const hasSymptoms = Object.values(selectedSymptoms).some(v => v > 0);
   if (!hasSymptoms) {
-    alert('Please select at least one symptom.');
+    showFieldError('symptoms-error', true);
     return false;
   }
+  showFieldError('symptoms-error', false);
   return true;
 }
 
-function showError(fieldId, msg) {
-  const el = document.getElementById(fieldId);
-  el.style.borderColor = '#ef4444';
-  el.focus();
-  el.addEventListener('input', () => el.style.borderColor = '', { once: true });
-  alert(msg);
+function validateStep4() {
+  if (!selectedDuration) {
+    showFieldError('duration-error', true);
+    return false;
+  }
+  showFieldError('duration-error', false);
+  return true;
 }
 
 // ── GENDER ───────────────────────────────────────────────────────
@@ -72,6 +125,7 @@ function selectGender(btn) {
   document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedGender = btn.dataset.value;
+  showFieldError('gender-error', false);
 }
 
 // ── HISTORY ──────────────────────────────────────────────────────
@@ -83,6 +137,7 @@ function toggleHistory(card) {
     document.querySelectorAll('.history-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedHistory.add('none');
+    showFieldError('history-error', false);
     return;
   }
   // Remove 'none' if selecting specific
@@ -97,6 +152,8 @@ function toggleHistory(card) {
     selectedHistory.add(cond);
     card.classList.add('selected');
   }
+
+  if (selectedHistory.size > 0) showFieldError('history-error', false);
 }
 
 // ── DURATION ─────────────────────────────────────────────────────
@@ -105,6 +162,7 @@ function selectDuration(card) {
   document.querySelectorAll('.duration-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
   selectedDuration = card.dataset.duration;
+  showFieldError('duration-error', false);
 }
 
 // ── TABS ─────────────────────────────────────────────────────────
@@ -121,10 +179,8 @@ function switchTab(tab, btn) {
 // ── ASSESSMENT ───────────────────────────────────────────────────
 
 async function runAssessment() {
-  if (!selectedDuration) {
-    alert('Please select the symptom duration.');
-    return;
-  }
+  if (!validateStep4()) return;
+
   goToStep(5);
 
   document.getElementById('resultsLoader').classList.remove('hidden');
@@ -219,17 +275,16 @@ function renderGuidance(rfResults) {
 
 async function findHospitals() {
   const btn = document.querySelector('.btn-find-hospitals');
-  btn.textContent = '⏳ Locating...';
+  btn.textContent = t('locating');
   btn.disabled = true;
 
   try {
     const pos = await getLocation();
     await fetchHospitals(pos.coords.latitude, pos.coords.longitude);
   } catch {
-    // Fallback to demo without location
     await fetchHospitals(null, null);
   } finally {
-    btn.textContent = '📍 ' + t('find_hospitals');
+    btn.textContent = t('find_hospitals');
     btn.disabled = false;
   }
 }
@@ -278,7 +333,6 @@ async function fetchHospitals(lat, lng) {
 // ── RESET ────────────────────────────────────────────────────────
 
 function resetAssessment() {
-  // Clear state
   selectedGender = '';
   selectedHistory.clear();
   selectedDuration = '';
@@ -293,5 +347,17 @@ function resetAssessment() {
   document.getElementById('demoNotice').classList.add('hidden');
   document.getElementById('resultsContent').classList.add('hidden');
   document.getElementById('resultsLoader').classList.remove('hidden');
-  goToStep(1);
+  clearAllErrors();
+  goToStep('home');
 }
+
+// Clear error when age is typed
+document.addEventListener('DOMContentLoaded', () => {
+  const ageEl = document.getElementById('age');
+  if (ageEl) {
+    ageEl.addEventListener('input', () => {
+      ageEl.classList.remove('input-error');
+      showFieldError('age-error', false);
+    });
+  }
+});
