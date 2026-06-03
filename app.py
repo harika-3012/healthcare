@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import pickle, json, numpy as np, os
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 
 BASE = os.path.dirname(__file__)
+DB_PATH = os.path.join(BASE, 'database', 'history.db')
 
 # Load models
 rf_model   = pickle.load(open(os.path.join(BASE, 'models/rf_model.pkl'), 'rb'))
@@ -51,6 +54,32 @@ DISEASE_INFO = {
     'Anemia':           'Low red blood cell count causing fatigue and weakness.',
     'Thyroid_Disorder': 'Imbalance in thyroid hormone production.',
 }
+def save_assessment(age, gender, disease, risk):
+    conn = sqlite3.connect(DB_PATH)
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO assessment_history
+        (
+            assessment_time,
+            age,
+            gender,
+            predicted_disease,
+            risk_level
+        )
+        VALUES (?, ?, ?, ?, ?)
+    """,
+    (
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        age,
+        gender,
+        disease,
+        risk
+    ))
+
+    conn.commit()
+    conn.close()
 
 
 def build_feature_vector(data):
@@ -125,6 +154,15 @@ def predict():
             'info': DISEASE_INFO.get(disease, ''),
             'guidance': GUIDANCE[risk]
         })
+    top_disease = rf_results[0]['disease']
+    top_risk = rf_results[0]['risk']
+
+    save_assessment(
+        data.get('age'),
+        data.get('gender'),
+        top_disease,
+        top_risk
+)
 
     return jsonify({
         'rf': rf_results,
@@ -153,6 +191,30 @@ def hospitals():
         {'name': 'Care Hospitals',    'address': 'Banjara Hills, Hyderabad','distance': '6.0 km', 'maps_url': 'https://maps.google.com/?q=Care+Hospitals+Banjara+Hills+Hyderabad'},
     ]
     return jsonify({'mode': 'demo', 'hospitals': demo})
+@app.route('/api/history')
+def history():
+
+    conn = sqlite3.connect(DB_PATH)
+
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM assessment_history
+        ORDER BY id DESC
+        LIMIT 50
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return jsonify([
+        dict(row)
+        for row in rows
+    ])
 
 
 if __name__ == '__main__':

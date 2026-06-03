@@ -1,1 +1,32 @@
-{"rf_accuracy": 95.58, "nb_accuracy": 94.58, "classes": ["Allergy", "Anemia", "Anxiety", "Arthritis", "Asthma", "Bronchitis", "Cold", "Dengue", "Depression", "Diabetes", "Flu", "Food_Poisoning", "Gastritis", "Heart_Disease", "Hypertension", "Kidney_Stone", "Malaria", "Migraine", "Pneumonia", "Sinusitis", "Thyroid_Disorder", "Typhoid", "Ulcer", "Viral_Fever"]}
+{
+  "rf_accuracy": 95.58,
+  "nb_accuracy": 94.58,
+  "classes": [
+    "Allergy",
+    "Anemia",
+    "Anxiety",
+    "Arthritis",
+    "Asthma",
+    "Bronchitis",
+    "Cold",
+    "Dengue",
+    "Depression",
+    "Diabetes",
+    "Flu",
+    "Food_Poisoning",
+    "Gastritis",
+    "Heart_Disease",
+    "Hypertension",
+    "Kidney_Stone",
+    "Malaria",
+    "Migraine",
+    "Pneumonia",
+    "Sinusitis",
+    "Thyroid_Disorder",
+    "Typhoid",
+    "Ulcer",
+    "Viral_Fever"
+  ],
+  "n_train": 4800,
+  "n_test": 1200
+}
