@@ -336,16 +336,19 @@ DEFAULT_PRECAUTIONS = {
 }
 
 
-def save_assessment(age, gender, disease, risk):
+def save_assessment(age, gender, disease, risk, extra_conditions=None, surgery_detail=None, other_condition_text=None):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO assessment_history
-        (assessment_time, age, gender, predicted_disease, risk_level)
-        VALUES (?, ?, ?, ?, ?)
+        (assessment_time, age, gender, predicted_disease, risk_level, extra_conditions, surgery_detail, other_condition_text)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        age, gender, disease, risk
+        age, gender, disease, risk,
+        json.dumps(extra_conditions or []),
+        surgery_detail or '',
+        other_condition_text or ''
     ))
     conn.commit()
     conn.close()
@@ -432,7 +435,10 @@ def predict():
     # Get precautions for top disease
     precautions = DISEASE_PRECAUTIONS.get(top_disease_key, DEFAULT_PRECAUTIONS)
 
-    save_assessment(data.get('age'), data.get('gender'), top_disease, top_risk)
+    save_assessment(data.get('age'), data.get('gender'), top_disease, top_risk,
+                    data.get('extra_conditions', []),
+                    data.get('surgery_detail', ''),
+                    data.get('other_condition_text', ''))
 
     return jsonify({
         'rf': rf_results,

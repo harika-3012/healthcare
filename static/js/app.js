@@ -3,6 +3,7 @@
 let currentStep = 1;
 let selectedGender = '';
 let selectedHistory = new Set();
+let selectedExtraHistory = new Set();
 let selectedDuration = '';
 let lastResults = null;
 
@@ -156,15 +157,20 @@ function toggleHistory(card) {
   const cond = card.dataset.condition;
   if (cond === 'none') {
     selectedHistory.clear();
-    document.querySelectorAll('.history-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('#primaryHistoryGrid .history-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedHistory.add('none');
+    // Disable extra section when None is active
+    document.querySelectorAll('#extraHistoryGrid .history-card').forEach(c => c.classList.add('card-disabled'));
+    _hideExtraDetailFields();
     showFieldError('history-error', false);
     return;
   }
-  const noneCard = document.querySelector('.history-card[data-condition="none"]');
+  const noneCard = document.querySelector('#primaryHistoryGrid .history-card[data-condition="none"]');
   if (noneCard) noneCard.classList.remove('selected');
   selectedHistory.delete('none');
+  // Re-enable extra section
+  document.querySelectorAll('#extraHistoryGrid .history-card').forEach(c => c.classList.remove('card-disabled'));
 
   if (selectedHistory.has(cond)) {
     selectedHistory.delete(cond);
@@ -175,6 +181,47 @@ function toggleHistory(card) {
   }
 
   if (selectedHistory.size > 0) showFieldError('history-error', false);
+}
+
+// ── EXTRA HISTORY ─────────────────────────────────────────────────
+
+function toggleExtraHistory(card) {
+  if (card.classList.contains('card-disabled')) return;
+  const cond = card.dataset.condition;
+
+  if (selectedExtraHistory.has(cond)) {
+    selectedExtraHistory.delete(cond);
+    card.classList.remove('selected');
+  } else {
+    selectedExtraHistory.add(cond);
+    card.classList.add('selected');
+  }
+
+  const surgeryWrap = document.getElementById('surgeryDetailWrap');
+  const otherWrap = document.getElementById('otherConditionWrap');
+
+  if (selectedExtraHistory.has('previous_surgery')) {
+    surgeryWrap.classList.remove('hidden');
+  } else {
+    surgeryWrap.classList.add('hidden');
+    document.getElementById('surgeryDetailText').value = '';
+  }
+
+  if (selectedExtraHistory.has('other')) {
+    otherWrap.classList.remove('hidden');
+  } else {
+    otherWrap.classList.add('hidden');
+    document.getElementById('otherConditionText').value = '';
+  }
+}
+
+function _hideExtraDetailFields() {
+  selectedExtraHistory.clear();
+  document.querySelectorAll('#extraHistoryGrid .history-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('surgeryDetailWrap').classList.add('hidden');
+  document.getElementById('otherConditionWrap').classList.add('hidden');
+  document.getElementById('surgeryDetailText').value = '';
+  document.getElementById('otherConditionText').value = '';
 }
 
 // ── DURATION ─────────────────────────────────────────────────────
@@ -215,6 +262,9 @@ async function runAssessment() {
     hypertension_history: selectedHistory.has('hypertension') ? 1 : 0,
     asthma_history:       selectedHistory.has('asthma') ? 1 : 0,
     heart_history:        selectedHistory.has('heart') ? 1 : 0,
+    extra_conditions:     Array.from(selectedExtraHistory).filter(c => c !== 'other'),
+    surgery_detail:       (document.getElementById('surgeryDetailText').value || '').trim(),
+    other_condition_text: (document.getElementById('otherConditionText').value || '').trim(),
     symptoms:             { ...selectedSymptoms },
   };
 
@@ -576,12 +626,18 @@ function downloadReport() {
 function resetAssessment() {
   selectedGender = '';
   selectedHistory.clear();
+  selectedExtraHistory.clear();
   selectedDuration = '';
   Object.keys(selectedSymptoms).forEach(k => delete selectedSymptoms[k]);
   document.getElementById('age').value = '';
   document.getElementById('symptomText').value = '';
+  document.getElementById('surgeryDetailText').value = '';
+  document.getElementById('otherConditionText').value = '';
+  document.getElementById('surgeryDetailWrap').classList.add('hidden');
+  document.getElementById('otherConditionWrap').classList.add('hidden');
   document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelectorAll('.history-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('#primaryHistoryGrid .history-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('#extraHistoryGrid .history-card').forEach(c => { c.classList.remove('selected', 'card-disabled'); });
   document.querySelectorAll('.duration-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('textResult').classList.add('hidden');
   document.getElementById('hospitalsList').classList.add('hidden');
