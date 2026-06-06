@@ -138,8 +138,8 @@ function analyzeText() {
   renderSymptomGrid();
 
   const names = Object.keys(detected).map(k => {
-    const s = SYMPTOMS.find(x => x.key === k);
-    return s ? s.label : k;
+    const translated = t(`sym_${k}`);
+    return translated !== `sym_${k}` ? translated : k.replace(/_/g, ' ');
   });
   resultDiv.innerHTML = `✅ <strong>${count} ${t('symptoms_detected')}:</strong> ${names.join(', ')}`;
 
@@ -179,7 +179,9 @@ let activeSymptomKey = '';
 
 function openSeverityModal(key, label) {
   activeSymptomKey = key;
-  document.getElementById('modalSymptomName').textContent = label;
+  // Use translated label if available
+  const translatedLabel = t(`sym_${key}`);
+  document.getElementById('modalSymptomName').textContent = translatedLabel !== `sym_${key}` ? translatedLabel : label;
   document.getElementById('severityModal').classList.remove('hidden');
 }
 

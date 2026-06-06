@@ -32,6 +32,14 @@ function switchLang(lang) {
   applyTranslations();
   // Re-render symptom grid labels
   if (typeof renderSymptomGrid === 'function') renderSymptomGrid();
+  // Re-render results if visible
+  if (typeof lastResults === 'object' && lastResults && lastResults.data) {
+    renderResults(lastResults.data, lastResults.payload);
+  }
+  // Re-render history if visible
+  if (document.getElementById('stepHistory').classList.contains('active')) {
+    if (typeof loadHistory === 'function') loadHistory();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

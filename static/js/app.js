@@ -311,6 +311,12 @@ function renderResults(data, payload) {
 
   const top = data.rf[0];
 
+  // Get translated disease name and info
+  const diseaseName = t(`disease_${top.disease_key}`);
+  const diseaseNameText = diseaseName !== `disease_${top.disease_key}` ? diseaseName : top.disease.replace(/_/g, ' ');
+  const diseaseInfo = t(`info_${top.disease_key}`);
+  const diseaseInfoText = diseaseInfo !== `info_${top.disease_key}` ? diseaseInfo : (top.info || t('primary_condition_desc'));
+
   // Primary result card
   const primaryCard = document.getElementById('primaryResultCard');
   primaryCard.className = 'primary-result-card risk-' + top.risk;
@@ -318,8 +324,8 @@ function renderResults(data, payload) {
     <div class="primary-result-icon">${getDiseaseIcon(top.disease_key)}</div>
     <div class="primary-result-body">
       <div class="primary-result-risk">${t(top.risk + '_risk')}</div>
-      <div class="primary-result-disease">${top.disease.replace(/_/g, ' ')}</div>
-      <div class="primary-result-desc">${top.info || t('primary_condition_desc')}</div>
+      <div class="primary-result-disease">${diseaseNameText}</div>
+      <div class="primary-result-desc">${diseaseInfoText}</div>
     </div>
   `;
 
@@ -349,16 +355,21 @@ function renderResults(data, payload) {
   condList.innerHTML = '';
   data.rf.slice(0, 3).forEach((r, i) => {
     const m = getMatchLabel(r.probability);
+    // Get translated disease name and info
+    const rDiseaseName = t(`disease_${r.disease_key}`);
+    const rDiseaseNameText = rDiseaseName !== `disease_${r.disease_key}` ? rDiseaseName : r.disease.replace(/_/g, ' ');
+    const rDiseaseInfo = t(`info_${r.disease_key}`);
+    const rDiseaseInfoText = rDiseaseInfo !== `info_${r.disease_key}` ? rDiseaseInfo : r.info;
     condList.innerHTML += `
       <div class="condition-row">
         <div class="condition-rank${i === 0 ? ' rank-1' : ''}">${i + 1}</div>
         <div class="condition-row-body">
-          <div class="condition-name">${r.disease.replace(/_/g, ' ')}</div>
+          <div class="condition-name">${rDiseaseNameText}</div>
           <span class="condition-match-label ${m.cls}">${m.label}</span>
           <div class="condition-bar-wrap">
             <div class="condition-bar ${m.barCls}" style="width:${Math.min(r.probability, 100)}%"></div>
           </div>
-          <div class="condition-info">${r.info}</div>
+          <div class="condition-info">${rDiseaseInfoText}</div>
         </div>
       </div>
     `;
@@ -367,12 +378,14 @@ function renderResults(data, payload) {
   // Guidance
   const guidanceCard = document.getElementById('guidanceCard');
   const iconMap = { high: '🚨', moderate: '⚠️', low: '✅' };
+  const guidanceText = t(`guidance_${top.risk}`);
+  const guidanceTextDisplay = guidanceText !== `guidance_${top.risk}` ? guidanceText : top.guidance;
   guidanceCard.className = 'guidance-card guidance-' + top.risk;
   guidanceCard.innerHTML = `
     <div class="guidance-icon">${iconMap[top.risk]}</div>
     <div class="guidance-body">
       <div class="guidance-title-text">${top.risk === 'high' ? t('high_risk') : top.risk === 'moderate' ? t('moderate_risk') : t('low_risk')}</div>
-      <div class="guidance-text">${top.guidance}</div>
+      <div class="guidance-text">${guidanceTextDisplay}</div>
     </div>
   `;
 
@@ -383,7 +396,7 @@ function renderResults(data, payload) {
     `<li><span class="precaution-check">✓</span><span>${p}</span></li>`
   ).join('');
   precCard.innerHTML = `
-    <div class="precautions-disease-name">${top.disease.replace(/_/g, ' ')}</div>
+    <div class="precautions-disease-name">${diseaseNameText}</div>
     <div class="precautions-desc">${prec.description || ''}</div>
     <ul class="precautions-list">${listItems}</ul>
     ${prec.consult ? `<div style="margin-top:14px;padding:12px 14px;background:#fef3c7;border-radius:8px;font-size:.84rem;color:#92400e;border:1px solid #fde68a">${prec.consult}</div>` : ''}
@@ -486,6 +499,10 @@ function renderHistoryList(records) {
     const month = dt.toLocaleString('default', { month: 'short' });
     const time = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const riskKey = r.risk_level ? r.risk_level.toLowerCase() : 'low';
+    // Translate disease name using the disease_key pattern (convert predicted_disease to key format)
+    const diseaseKey = r.predicted_disease ? r.predicted_disease.replace(/ /g, '_') : '';
+    const translatedDisease = t(`disease_${diseaseKey}`);
+    const diseaseDisplay = translatedDisease !== `disease_${diseaseKey}` ? translatedDisease : (r.predicted_disease || '—');
     return `
       <div class="assessment-history-card" id="ah-${r.id}">
         <div class="ah-date-badge">
@@ -493,7 +510,7 @@ function renderHistoryList(records) {
           <div class="ah-date-month">${month}</div>
         </div>
         <div class="ah-body">
-          <div class="ah-condition">${r.predicted_disease || '—'}</div>
+          <div class="ah-condition">${diseaseDisplay}</div>
           <div class="ah-meta">${t('your_age')}: ${r.age || '—'} &nbsp;|&nbsp; ${t('your_gender')}: ${r.gender ? r.gender.charAt(0).toUpperCase() + r.gender.slice(1) : '—'} &nbsp;|&nbsp; ${time}</div>
         </div>
         <div class="ah-right">
